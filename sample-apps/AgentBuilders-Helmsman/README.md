@@ -688,31 +688,6 @@ Every remediation request undergoes:
 
 If any policy would be violated, the operation is automatically rejected before reaching Kubernetes.
 
----
-
-# 📸 Project Screenshots
-
-## 🏗️ System Architecture
-
-<p align="center">
-  <img src="images/architecture.png" width="900">
-</p>
-
----
-
-## 🔄 Multi-Agent Workflow
-
-<p align="center">
-  <img src="images/architecture-flow.png" width="900">
-</p>
-
----
-
-## 📊 NitroStudio Dashboard
-
-<p align="center">
-  <img src="images/dashboard.png" width="900">
-</p>
 
 ---
 
