@@ -815,17 +815,6 @@ git push origin feature/my-feature
 - Kubernetes Client SDK
 - kind (Kubernetes in Docker)
 
----
-
-# 👥 Team
-
-Built for the **NitroStack MCP Hackathon**
-
-| Member | Role |
-|---------|------|
-| **Mounish Senisetty** | MCP Server Development · Kubernetes Integration · Backend |
-| **Ashrith** | AI Agent Design · Kubernetes |
-| **Sandhiya** | Research · Documentation · Testing |
 
 ---
 
@@ -837,18 +826,6 @@ See the `LICENSE` file for more information.
 
 ---
 
-# 🙏 Acknowledgements
-
-Special thanks to the communities and projects that made HelmsMan possible:
-
-- Kubernetes
-- NitroStack MCP
-- Docker
-- OpenAI / xAI
-- kube-state-metrics
-- The Cloud Native Computing Foundation (CNCF)
-
----
 
 # ⭐ Support
 
