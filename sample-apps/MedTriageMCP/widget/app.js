@@ -101,8 +101,6 @@ function setSubmitLoading(on) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function loadPatients() {
-  $('server-status').innerHTML = `<span class="status-dot connecting"></span><span class="status-text">Loading…</span>`;
-
   try {
     let patients;
     if (CONFIG.USE_MCP_API) {
@@ -118,15 +116,14 @@ async function loadPatients() {
     state.patientMap = {};
     patients.forEach(p => { state.patientMap[p.patientId] = p; });
 
-    $('server-status').innerHTML = `<span class="status-dot connected"></span><span class="status-text">Live</span>`;
     renderPatientList(patients);
   } catch (err) {
-    $('server-status').innerHTML = `<span class="status-dot offline"></span><span class="status-text">Offline</span>`;
     $('patient-list').innerHTML = `<div style="padding:16px;color:var(--text-muted);font-size:0.8rem;">
-      Failed to load patients. Is the server running?<br><small>${err.message}</small></div>`;
-    toast('Could not load patient data — running in offline mode', 'error', 5000);
+      Failed to load patients.<br><small>${err.message}</small></div>`;
+    toast('Could not load patient data', 'error', 5000);
   }
 }
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MCP API calls (used when USE_MCP_API=true)
@@ -212,6 +209,9 @@ function selectPatient(patientId) {
   state.lastFollowupResult = null;
   state.lastAvailResults = [];
 
+  // Auto-switch to timeline tab when a patient is selected
+  if (typeof switchTab === 'function') switchTab('timeline');
+
   // Update sidebar active state
   qa('.patient-item').forEach(el => el.classList.remove('active'));
   const item = $(`pi-${patientId}`);
@@ -219,6 +219,7 @@ function selectPatient(patientId) {
 
   const patient = state.patientMap[patientId];
   if (!patient) return;
+
 
   // Show patient header
   $('empty-state').classList.add('hidden');
