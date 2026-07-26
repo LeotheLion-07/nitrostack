@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HealthBridge — Patient Timeline Dashboard</title>
+  <meta name="description" content="HealthBridge cross-hospital patient safety dashboard. View full patient history, detect drug conflicts, check medicine availability and schedule follow-ups in real time." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════ TOP BAR ══════════════════════════════════════════════ -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <span class="brand-icon">🏥</span>
+    <span class="brand-name">HealthBridge</span>
+    <span class="brand-sub">Cross-Hospital Intelligence</span>
+  </div>
+  <div class="topbar-status" id="server-status">
+    <span class="status-dot connecting"></span>
+    <span class="status-text">Connecting…</span>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════ MAIN LAYOUT ══════════════════════════════════════════════ -->
+<main class="layout">
+
+  <!-- ─── LEFT PANEL: Patient Selector ─── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2 class="sidebar-title">Patients</h2>
+      <button class="btn btn-icon" id="btn-refresh-patients" title="Refresh patient list">↺</button>
+    </div>
+    <div class="search-wrap">
+      <input type="text" id="patient-search" class="input-search" placeholder="Search by name or ID…" autocomplete="off" />
+    </div>
+    <div id="patient-list" class="patient-list">
+      <div class="skeleton-list">
+        <div class="skeleton-item"></div>
+        <div class="skeleton-item"></div>
+        <div class="skeleton-item"></div>
+        <div class="skeleton-item"></div>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <button class="btn btn-primary full-width" id="btn-new-visit">
+        <span>＋</span> Log New Visit
+      </button>
+    </div>
+  </aside>
+
+  <!-- ─── MAIN CONTENT: Timeline ─── -->
+  <section class="content" id="content">
+
+    <!-- Empty state -->
+    <div class="empty-state" id="empty-state">
+      <div class="empty-icon">🔍</div>
+      <h3>Select a Patient</h3>
+      <p>Choose a patient from the left panel to view their cross-hospital timeline.</p>
+    </div>
+
+    <!-- Patient header (hidden until selected) -->
+    <div class="patient-header hidden" id="patient-header">
+      <div class="patient-meta">
+        <div class="patient-avatar" id="patient-avatar">?</div>
+        <div>
+          <h1 class="patient-name" id="patient-name">—</h1>
+          <div class="patient-details">
+            <span id="patient-id-badge" class="badge badge-id">—</span>
+            <span id="patient-dob">DOB: —</span>
+          </div>
+        </div>
+      </div>
+      <div class="patient-allergies" id="patient-allergies-wrap">
+        <span class="allergies-label">Known Allergies:</span>
+        <div id="patient-allergies" class="allergy-tags"></div>
+      </div>
+    </div>
+
+    <!-- Risk-level banner -->
+    <div class="risk-banner hidden" id="risk-banner">
+      <span id="risk-banner-text">—</span>
+    </div>
+
+    <!-- Loading overlay -->
+    <div class="loading-overlay hidden" id="loading-overlay">
+      <div class="spinner"></div>
+      <p id="loading-text">Processing…</p>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline hidden" id="timeline">
+      <!-- Visit cards injected by JS -->
+    </div>
+
+  </section>
+</main>
+
+<!-- ═══════════════════════════════════════════════ LOG VISIT MODAL ══════════════════════════════════════════════ -->
+<div class="modal-overlay hidden" id="modal-overlay">
+  <div class="modal" id="modal-new-visit" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+      <h2 id="modal-title">Log New Visit</h2>
+      <button class="btn btn-icon modal-close" id="btn-modal-close" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="form-new-visit" novalidate>
+
+        <!-- Row 1 -->
+        <div class="form-row two-col">
+          <div class="form-group">
+            <label for="f-patient-id">Patient ID</label>
+            <input type="text" id="f-patient-id" class="form-input" readonly />
+          </div>
+          <div class="form-group">
+            <label for="f-hospital-id">Hospital <span class="required">*</span></label>
+            <select id="f-hospital-id" class="form-input form-select" required>
+              <option value="">— Select hospital —</option>
+              <option value="HOSP-A">City General Hospital</option>
+              <option value="HOSP-B">Sunrise Medical Centre</option>
+              <option value="HOSP-C">Green Valley Clinic</option>
+              <option value="HOSP-D">Lakeside Pharmacy &amp; Hospital</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="form-row two-col">
+          <div class="form-group">
+            <label for="f-doctor-name">Doctor Name <span class="required">*</span></label>
+            <input type="text" id="f-doctor-name" class="form-input" placeholder="Dr. Name" required />
+          </div>
+          <div class="form-group">
+            <label for="f-severity">Severity <span class="required">*</span></label>
+            <select id="f-severity" class="form-input form-select" required>
+              <option value="">— Select severity —</option>
+              <option value="mild">Mild</option>
+              <option value="moderate">Moderate</option>
+              <option value="severe">Severe</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Diagnosis -->
+        <div class="form-group">
+          <label for="f-diagnosis">Diagnosis <span class="required">*</span></label>
+          <input type="text" id="f-diagnosis" class="form-input" placeholder="Primary diagnosis" required />
+        </div>
+
+        <!-- Prescribed Medicines -->
+        <div class="form-group">
+          <label>Prescribed Medicines <span class="required">*</span></label>
+          <div id="medicines-list">
+            <div class="medicine-row" data-index="0">
+              <input type="text" class="form-input med-name" placeholder="Medicine name" required />
+              <input type="text" class="form-input med-dosage" placeholder="Dosage (e.g. 500mg twice daily)" required />
+              <button type="button" class="btn btn-icon btn-remove-med" title="Remove">✕</button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-ghost" id="btn-add-medicine">＋ Add Medicine</button>
+        </div>
+
+        <!-- Allergies Noted -->
+        <div class="form-group">
+          <label for="f-allergies">Allergies Noted <span class="optional">(optional)</span></label>
+          <input type="text" id="f-allergies" class="form-input" placeholder="e.g. penicillin, sulfa (comma-separated)" />
+        </div>
+
+        <!-- Notes -->
+        <div class="form-group">
+          <label for="f-notes">Clinical Notes <span class="optional">(optional)</span></label>
+          <textarea id="f-notes" class="form-input form-textarea" rows="3" placeholder="Free-text notes…"></textarea>
+        </div>
+
+        <!-- Validation message -->
+        <div class="form-error hidden" id="form-error"></div>
+
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="btn-cancel-visit">Cancel</button>
+      <button class="btn btn-primary" id="btn-submit-visit">
+        <span id="submit-text">Submit Visit</span>
+        <span class="btn-spinner hidden" id="submit-spinner"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ TOAST ══════════════════════════════════════════════ -->
+<div class="toast-container" id="toast-container"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
