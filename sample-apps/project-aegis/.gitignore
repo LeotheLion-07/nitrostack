@@ -41,18 +41,3 @@ out.txt
 src/widgets/.next/
 dump.html
 src/widgets_tmp/
-
-# Added by nitrostack pack
-src/widgets/node_modules/
-src/widgets/out/
-pids/
-*.pid
-*.seed
-*.pid.lock
-uploads/
-.npm/
-.eslintcache
-*.pem
-*.key
-tokens.json
-.git/
