@@ -450,29 +450,29 @@ Below is a complete reference of the environment variables used by ClinicaMind:
 # DATABASE CONFIGURATION
 # ==========================================
 # Supabase PostgreSQL or Local SQLite Connection String
-DATABASE_URL="postgresql://postgres:password@db.supabase.co:5432/postgres"
+DATABASE_URL="<YOUR_DATABASE_CONNECTION_STRING>"
 
 # ==========================================
 # GOOGLE GMAIL OAUTH INTEGRATION
 # ==========================================
 # Google Cloud Platform OAuth 2.0 Credentials
-GOOGLE_CLIENT_ID="your_google_client_id.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET="GOCSPX-your_google_client_secret"
+GOOGLE_CLIENT_ID="<YOUR_GOOGLE_CLIENT_ID>"
+GOOGLE_CLIENT_SECRET="<YOUR_GOOGLE_CLIENT_SECRET>"
 
 # ==========================================
 # AI MODEL PROVIDERS
 # ==========================================
 # Google Gemini API Key for Extraction & Reasoning
-GEMINI_API_KEY="AIzaSy..."
+GEMINI_API_KEY="<YOUR_GEMINI_API_KEY>"
 
 # OpenAI API Key (Optional alternative model provider)
-OPENAI_API_KEY="sk-proj-..."
+OPENAI_API_KEY="<YOUR_OPENAI_API_KEY>"
 
 # ==========================================
 # AUDIO & TRANSCRIPTION SERVICES
 # ==========================================
 # Deepgram Speech-to-Text API Key for Consultation Recording
-DEEPGRAM_API_KEY="812082..."
+DEEPGRAM_API_KEY="<YOUR_DEEPGRAM_API_KEY>"
 ```
 
 ---
