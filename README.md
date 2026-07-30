@@ -1,267 +1,201 @@
-# FactoryBrain
+<div align="center">
+  <a href="https://nitrostack.ai">
+    <img src="logo.png" alt="NitroStack" width="120" />
+  </a>
 
-### Multi-agent AI for autonomous manufacturing operations
+  <h1>NitroStack</h1>
 
-> Factories do not lose money only because machines fail. They lose money because decisions happen too late.
+  <p><strong>The enterprise-grade TypeScript framework for building production-ready MCP servers.</strong></p>
+  <p>Decorators. Dependency Injection. Widgets. One framework to ship AI-native backends.</p>
 
-FactoryBrain is an agentic manufacturing operations platform built with [NitroStack](https://github.com/nitrostackai/nitrostack) and the Model Context Protocol (MCP). Specialized agents collaborate to detect sustained machine anomalies, plan maintenance, verify spare-part availability, recommend suppliers, protect production schedules, obtain approvals, notify stakeholders, and monitor recovery.
+  <br />
 
-Instead of stopping at a failure alert, FactoryBrain coordinates the operational response from sensor signal to restored production.
+  <a href="https://www.npmjs.com/package/@nitrostack/core"><img src="https://img.shields.io/npm/v/@nitrostack/core?style=flat-square&label=%40nitrostack%2Fcore&color=cb0000" alt="npm version" /></a>
+  <a href="https://www.npmjs.com/package/@nitrostack/core"><img src="https://img.shields.io/npm/dm/@nitrostack/core?style=flat-square&color=cb0000" alt="npm downloads" /></a>
+  <a href="https://github.com/nitrocloudofficial/nitrostack"><img src="https://img.shields.io/github/stars/nitrocloudofficial/nitrostack?style=flat-square&color=cb0000" alt="GitHub stars" /></a>
+  <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue?style=flat-square" alt="License" /></a>
+  <a href="https://discord.gg/uVWey6UhuD"><img src="https://img.shields.io/badge/Discord-Join%20Community-5865F2?style=flat-square&logo=discord&logoColor=white" alt="Discord" /></a>
+  <a href="https://x.com/nitrostackai"><img src="https://img.shields.io/badge/Follow-000000?style=flat-square&logo=x&logoColor=white" alt="X" /></a>
+  <a href="https://www.youtube.com/@nitrostackai"><img src="https://img.shields.io/badge/YouTube-Subscribe-FF0000?style=flat-square&logo=youtube&logoColor=white" alt="YouTube" /></a>
+  <a href="https://linkedin.com/company/nitrostack-ai/"><img src="https://img.shields.io/badge/LinkedIn-Follow-0A66C2?style=flat-square&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
+  <a href="https://github.com/nitrostackai"><img src="https://img.shields.io/badge/GitHub-Organization-181717?style=flat-square&logo=github&logoColor=white" alt="GitHub" /></a>
 
-## Why FactoryBrain?
+  <br />
+  <br />
 
-Manufacturing data is often fragmented across machine monitoring, maintenance, inventory, procurement, scheduling, and management systems. When a machine begins to degrade, people must manually coordinate decisions between these systems—often after downtime has already started.
+  <a href="https://docs.nitrostack.ai"><strong>Documentation</strong></a> &nbsp;&middot;&nbsp;
+  <a href="https://docs.nitrostack.ai/quick-start"><strong>Quick Start</strong></a> &nbsp;&middot;&nbsp;
+  <a href="https://blog.nitrostack.ai"><strong>Blog</strong></a> &nbsp;&middot;&nbsp;
+  <a href="https://nitrostack.ai/studio"><strong>NitroStudio</strong></a> &nbsp;&middot;&nbsp;
+  <a href="https://discord.gg/uVWey6UhuD"><strong>Discord</strong></a>
 
-FactoryBrain connects those functions through autonomous, auditable agents that can:
-
-- Detect persistent anomalies instead of reacting to a single noisy reading.
-- Create a maintenance plan using machine configuration and repair history.
-- Reserve an available spare part or initiate procurement when stock is insufficient.
-- Rank suppliers using urgency, delivery speed, reliability, and cost.
-- Propose production rerouting without silently changing an approved schedule.
-- Apply configurable manager-approval policies.
-- Notify maintenance, procurement, requesters, supervisors, and dashboards.
-- Track the workflow until the machine returns to service.
-
-## End-to-end workflow
-
-```mermaid
-flowchart LR
-    S[Machine sensors] --> MA[Machine Agent]
-    MA -->|Sustained anomaly alert| O[Orchestrator]
-    O --> MT[Maintenance Agent]
-    MT --> IV[Inventory Agent]
-    IV -->|Available| PP[Production Agent]
-    IV -->|Low or out of stock| PA[Purchase Agent]
-    PA --> PP
-    MT --> MG[Manager Agent]
-    IV --> MG
-    PA --> MG
-    PP --> MG
-    MG -->|Approved| NT[Notification Agent]
-    MG -->|Human review required| HA[Approval workflow]
-    HA --> NT
-    NT --> MO[Monitoring Agent]
-    MO -->|Machine operational| DONE[Workflow completed]
-```
-
-Every transition is recorded with an idempotency key and workflow state, making the chain of decisions explainable and resistant to duplicate execution.
-
-## Agent responsibilities
-
-| Agent | Responsibility | Representative outcome |
-|---|---|---|
-| Machine | Evaluates complete timestamped telemetry against healthy baselines and persistence rules | Failure probability, evidence, urgency, likely cause, alert |
-| Maintenance | Uses the machine registry and repair history to prepare the intervention | Ticket, required part, technician, team, repair estimate |
-| Inventory | Validates parts, checks available quantity, and reserves stock | In-stock, low-stock, or out-of-stock decision |
-| Purchase | Ranks compatible active suppliers | Supplier recommendation and purchase request |
-| Production | Finds affected orders and validates alternate capacity | Proposed reroutes, delays, and recovery plan |
-| Manager | Synthesizes cost and operational impact under approval policy | Approval request, decision, executive report |
-| Notification | Delivers role-specific messages with retries and deduplication | Maintenance, procurement, floor, requester, and dashboard updates |
-| Monitoring | Normalizes external status events and detects stalled stages | Live workflow status, alerts, recovery completion |
-
-## Key capabilities
-
-- Multi-agent orchestration with durable stage transitions
-- MCP tools, resources, prompts, and interactive dashboard widgets
-- Rolling-window anomaly detection with sustained-event thresholds
-- Maintenance-history-aware repair planning
-- Atomic inventory reservation when MongoDB is enabled
-- Urgency-aware supplier scoring
-- Priority-aware production rerouting
-- Automatic and human-in-the-loop approvals
-- Redis/BullMQ delivery with retries and dead-letter handling
-- In-memory fallback for a zero-infrastructure demonstration
-- MongoDB persistence for durable workflows
-- Socket.IO updates for live dashboards
-- Duplicate suppression across workflows, events, and notifications
-
-## Technology stack
-
-| Layer | Technology |
-|---|---|
-| Agent and MCP framework | NitroStack, Model Context Protocol |
-| Backend | TypeScript, Node.js, Zod |
-| Durable database | MongoDB |
-| Event delivery | Redis, BullMQ |
-| Realtime gateway | Socket.IO, WebSocket |
-| Widgets | React, Next.js, `@nitrostack/widgets` |
-| Testing | Node.js test runner, in-memory and integration suites |
-| Demo data | Machine, sensor, maintenance, inventory, supplier, and production CSV datasets |
-
-## Project structure
-
-```text
-src/
-├── modules/
-│   ├── machine/          # Telemetry analysis and failure alerts
-│   ├── maintenance/      # Maintenance tickets and repair planning
-│   ├── inventory/        # Stock lookup and reservations
-│   ├── purchase/         # Supplier scoring and purchase requests
-│   ├── production/       # Disruption and rerouting plans
-│   ├── manager/          # Approval policy and decision reports
-│   ├── notification/     # Delivery, retries, and recipients
-│   └── monitoring/       # Workflow tracking and stall detection
-├── orchestrator/         # Workflow state machine and routing
-├── services/             # Database, queue, AI, and prompt services
-├── resources/            # MCP operational resources
-├── prompts/              # Versioned agent prompts
-├── gateway/              # Realtime event gateway
-└── widgets/              # Factory dashboards and operational cards
-
-data/                     # Demo factory datasets
-tests/                    # Unit, workflow, and integration tests
-```
-
-## Quick start
-
-### Prerequisites
-
-- Node.js 20 or newer
-- npm
-- NitroStudio for the recommended interactive demo
-- Docker Desktop only if running MongoDB/Redis integration tests
-
-### Install and run
-
-```bash
-git clone https://github.com/praishwarya10/nitrostack.git
-cd nitrostack/sample-apps/factorybrain
-npm install
-cp .env.example .env
-npm run dev
-```
-
-On Windows PowerShell, copy the environment file with:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-Open the MCP server in [NitroStudio](https://nitrostack.ai/studio) to inspect tools, run scenarios, and view agent activity.
-
-The default local mode does not require MongoDB or Redis. When those services are configured, FactoryBrain automatically uses durable storage and queued event delivery.
-
-## Configuration
-
-The included [`.env.example`](.env.example) documents all supported settings. Common options include:
-
-```dotenv
-NITROSTACK_APP_MODE=universal
-PORT=3001
-HOST=localhost
-
-# Optional durable infrastructure
-MONGODB_URI=mongodb://localhost:27017
-MONGODB_DATABASE=factorybrain
-REDIS_URL=redis://localhost:6379
-
-# Manager policy
-FACTORYBRAIN_APPROVAL_THRESHOLD=1000
-FACTORYBRAIN_AUTO_APPROVAL=true
-
-# Optional OpenAI-compatible model provider
-FACTORYBRAIN_AI_BASE_URL=https://your-provider.example/v1
-FACTORYBRAIN_AI_API_KEY=
-FACTORYBRAIN_AI_MODEL=gpt-5-mini
-```
-
-Never commit a populated `.env` file. Environment files, virtual environments, dependencies, generated builds, credentials, and NitroStudio runtime state are excluded by `.gitignore`.
-
-## Hackathon demo
-
-Start a fresh server session, reconnect the project in NitroStudio, and use this short prompt:
-
-```text
-Simulate a critical predictive-maintenance event for CNC machine M002 using three consecutive abnormal sensor readings.
-
-Run the complete FactoryBrain workflow autonomously: failure prediction, alert creation, maintenance ticket, inventory check, conditional procurement, production recovery planning, manager approval, notifications, and monitoring.
-
-Use only actual tool results, do not duplicate automatically completed steps, and do not invent missing data. Briefly explain each agent's decision and finish with the final business outcome and workflow status.
-```
-
-M002 is used because its configured health and risk profile can genuinely reach the Critical classification under the current scoring policy. Procurement remains conditional: if the required part is available, the system reserves it and correctly skips purchasing.
-
-## Available commands
-
-```bash
-npm run dev              # Start the NitroStack development environment
-npm run build            # Build TypeScript and bundle all widgets
-npm start                # Build and start the production server
-npm run start:prod       # Start from the existing production build
-npm test                 # Build and run the complete unit suite
-npm run test:unit        # Run unit and in-memory workflow tests
-npm run test:integration # Run the MongoDB/Redis integration pipeline
-npm run infra:up         # Start integration infrastructure with Docker
-npm run infra:down       # Stop and remove integration infrastructure
-```
-
-## Testing
-
-Run the standard verification suite:
-
-```bash
-npm test
-```
-
-The test suite covers:
-
-- Tool input validation and direct NitroStudio controller initialization
-- Failure prediction and sustained anomaly handling
-- Maintenance ticket generation
-- Inventory reservation and invalid-part protection
-- Supplier ranking and procurement branching
-- Production rerouting and conflict detection
-- Manager approval and rejection paths
-- Notification retries and duplicate suppression
-- Monitoring, out-of-order events, stalls, and recovery
-- Complete Machine → Maintenance → Inventory → Purchase → Production → Manager → Notification → Monitoring execution
-
-For durable infrastructure testing:
-
-```bash
-npm run infra:up
-npm run test:integration
-npm run infra:down
-```
-
-## Safety and decision boundaries
-
-FactoryBrain is designed as a decision-support and orchestration prototype:
-
-- A single abnormal reading does not automatically generate a maintenance alert.
-- Invalid part identifiers fail safely and cannot trigger accidental procurement.
-- Production changes are proposed and remain subject to manager policy.
-- High-value actions can pause for explicit human approval.
-- The system does not claim repair completion until monitoring confirms that the machine is operational.
-
-## Documentation
-
-- [System architecture](FactoryBrain-AI-System-Architecture.md)
-- [Implementation guide](FactoryBrain-AI-Build-Guide.md)
-- [React widgets implementation](FactoryBrain%20React%20Widgets%20Implementation.docx)
-- [NitroStack documentation](https://docs.nitrostack.ai)
-- [NitroStudio](https://nitrostack.ai/studio)
-
-## Roadmap
-
-- Digital-twin integration
-- Real industrial telemetry connectors
-- Computerized maintenance management system integrations
-- ERP and supplier marketplace integrations
-- Multi-factory coordination
-- Energy and carbon optimization
-- Workforce scheduling
-- Reinforcement-learning-based production policies
-
-## Team
-
-Built by **Team Naalvar** for an Agentic AI Hackathon.
-
-## Project status
-
-FactoryBrain is a hackathon prototype intended for demonstration, evaluation, and research. Validate operational recommendations and safety procedures before connecting the system to real manufacturing equipment or production systems.
+  <br />
+  <br />
+</div>
 
 ---
 
-> **FactoryBrain turns disconnected factory data into coordinated decisions before downtime happens.**
+## Quick Start
+
+### Prerequisites
+
+- **Node.js** >= 20.18 ([download](https://nodejs.org/))
+- **npm** >= 9
+
+### 1. Scaffold a new project
+
+```bash
+npx @nitrostack/cli init my-server
+```
+
+![NitroStack CLI](assets/gif/nitrocli.gif)
+
+### 2. Start developing
+
+```bash
+cd my-server
+npm install
+npm run dev
+```
+
+Your MCP server is running. Connect it to any MCP-compatible client.
+
+### 3. Open in NitroStudio
+
+Once your project is scaffolded, open the same folder in NitroStudio for visual testing and debugging.
+
+- Download: <https://nitrostack.ai/studio>
+- Open your `my-server` project folder
+- Use NitroStudio to test tools, inspect payloads, and chat with your MCP server
+
+## Why NitroStack?
+
+Building MCP servers today means stitching together boilerplate, reinventing authentication, and hoping your tooling scales. NitroStack gives you an opinionated, batteries-included framework so you can focus on what your server actually does.
+
+- **Decorator-driven** — Define tools, resources, and prompts with clean, declarative TypeScript decorators
+- **Dependency injection** — First-class DI container with singleton, transient, and scoped lifecycles
+- **Auth built in** — JWT, OAuth 2.1, and API key authentication out of the box
+- **Middleware pipeline** — Guards, interceptors, pipes, and exception filters just like enterprise backends
+- **UI Widgets** — Attach React components to tool outputs for rich, interactive responses
+- **Zod validation** — End-to-end type safety from schema to runtime
+- **NitroStudio** — A dedicated desktop app for testing, debugging, and chatting with your server
+
+## See It in Action
+
+```typescript
+import { McpApp, Module, ToolDecorator as Tool, z, ExecutionContext } from '@nitrostack/core';
+
+@McpApp({
+  module: AppModule,
+  server: { name: 'my-server', version: '1.0.0' }
+})
+@Module({ imports: [] })
+export class AppModule {}
+
+export class SearchTools {
+  @Tool({
+    name: 'search_products',
+    description: 'Search the product catalog',
+    inputSchema: z.object({
+      query: z.string().describe('Search query'),
+      maxResults: z.number().default(10)
+    })
+  })
+  @UseGuards(ApiKeyGuard)
+  @Cache({ ttl: 300 })
+  @Widget('product-grid')
+  async search(input: { query: string; maxResults: number }, ctx: ExecutionContext) {
+    ctx.logger.info('Searching products', { query: input.query });
+    return this.productService.search(input.query, input.maxResults);
+  }
+}
+```
+
+One decorator stack gives you: **API definition + validation + auth + caching + UI** — zero boilerplate.
+
+## Ecosystem
+
+NitroStack is modular. Install only what you need:
+The implementation workspace for NitroStack packages lives in [`typescript/`](./typescript).
+
+| Package | What it does | Install |
+|:---|:---|:---|
+| [`@nitrostack/core`](./typescript/packages/core) | The framework — decorators, DI, server runtime | `npm i @nitrostack/core` |
+| [`@nitrostack/cli`](./typescript/packages/cli) | Scaffolding, dev server, code generators | `npm i -g @nitrostack/cli` |
+| [`@nitrostack/widgets`](./typescript/packages/widgets) | React SDK for interactive tool output UIs | `npm i @nitrostack/widgets` |
+
+## NitroStudio
+
+NitroStudio is a desktop app purpose-built for developing MCP servers. Open your project folder — it handles the dev server for you.
+
+![NitroStudio](assets/gif/nitrostudio-main.gif)
+
+**[Download NitroStudio](https://nitrostack.ai/studio)**
+
+<table>
+<tr>
+<td width="50%">
+
+**Real-time tool testing**
+Execute tools, inspect payloads, and debug request/response cycles.
+
+![Testing](assets/gif/nitrostudio-testing.gif)
+
+</td>
+<td width="50%">
+
+**Built-in AI chat**
+Talk to your MCP server through an integrated AI assistant.
+
+![AI Chat](assets/gif/nitrostudio-chat.gif)
+
+</td>
+</tr>
+</table>
+
+- **Widget preview** — Instantly visualize your interactive UI components
+- **Hot reload** — Changes reflect in real time as you develop
+
+## Documentation
+
+| Resource | Description |
+|:---|:---|
+| [Getting Started](https://docs.nitrostack.ai/getting-started) | Installation, quick start, and first project |
+| [Server Concepts](https://docs.nitrostack.ai/sdk/typescript/server-concepts) | Modules, DI, and architecture deep dive |
+| [Tools Guide](https://docs.nitrostack.ai/sdk/typescript/tools-guide) | Defining tools, validation, annotations |
+| [Widgets Guide](https://docs.nitrostack.ai/sdk/typescript/ui-widgets-guide) | Building interactive UI components |
+| [Authentication](https://docs.nitrostack.ai/sdk/typescript/authentication-overview) | JWT, OAuth 2.1, API key setup |
+| [CLI Reference](https://docs.nitrostack.ai/cli/introduction) | All CLI commands and options |
+| [Deployment](https://docs.nitrostack.ai/deployment/checklist) | Production checklist, Docker, cloud platforms |
+
+## Community
+
+- [Discord](https://discord.gg/uVWey6UhuD) — Ask questions, share projects, get help
+- [GitHub Discussions](https://github.com/nitrocloudofficial/nitrostack/discussions) — Proposals, ideas, and Q&A
+- [Twitter / X](https://x.com/nitrostackai) — Announcements and updates
+- [YouTube](https://www.youtube.com/@nitrostackai) — Product demos and walkthroughs
+- [LinkedIn](https://linkedin.com/company/nitrostack-ai/) — Company news and updates
+- [GitHub](https://github.com/nitrostackai) — Organization profile and open-source work
+- [Blog](https://blog.nitrostack.ai) — Tutorials, deep dives, and release notes
+
+## Contributing
+
+We welcome contributions of all kinds — bug fixes, features, docs, and ideas. Read the **[Contributing Guide](./CONTRIBUTING.md)** to get started.
+
+Looking for a place to begin? Check out issues labeled [**good first issue**](https://github.com/nitrocloudofficial/nitrostack/labels/good%20first%20issue).
+
+## Contributors
+
+<a href="https://github.com/nitrocloudofficial/nitrostack/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=nitrocloudofficial/nitrostack" alt="Contributors" />
+</a>
+
+## License
+
+NitroStack is open-source software licensed under the [Apache License 2.0](./LICENSE).
+
+---
+
+<div align="center">
+  <sub>Built by the <a href="https://nitrostack.ai">NitroStack</a> team and contributors.</sub>
+</div>
